@@ -5,6 +5,7 @@ class mEmitter {
         this._emiter = new EventEmitter();
         this._emiter.setMaxListeners(100);
     }
+
     emit(...args) {
         this._emiter.emit(...args);
     }

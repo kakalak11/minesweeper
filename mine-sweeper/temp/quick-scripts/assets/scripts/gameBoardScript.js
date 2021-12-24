@@ -20,7 +20,7 @@ cc.Class({
 
     properties: {
         tilePrefab: cc.Prefab,
-        _gridSize: 3,
+        _collumn: 6,
         _tileList: []
     },
 
@@ -28,14 +28,27 @@ cc.Class({
 
 
     onLoad: function onLoad() {
-        this._setupGrid(this._gridSize * this._gridSize);
-
         // for (let i = 0; i < 16; i++) cc.log(i % 4)
+        Emitter.instance.registerEvent('gameStart', this._start.bind(this));
+        Emitter.instance.registerEvent('gameStop', this._reset.bind(this));
+
+        //show all the tile for debug
+
+        // cc.log(this._collumn);
     },
 
 
-    _setupGrid: function _setupGrid(tilesNumber) {
-        for (var index = 0; index < tilesNumber; index++) {
+    _start: function _start(data) {
+        var _this = this;
+
+        Emitter.instance.emit('playing');
+
+        this.node.getComponent(cc.Layout).cellSize.height = data.cellSize;
+        this.node.getComponent(cc.Layout).cellSize.width = data.cellSize;
+        this._row = data.cellNumber / 6;
+        cc.log(this.node.getComponent(cc.Layout).cellSize.height, this.node.getComponent(cc.Layout).cellSize.width);
+
+        for (var index = 0; index < data.cellNumber; index++) {
             this.tile = cc.instantiate(this.tilePrefab);
             this.script = this.tile.getComponent('prefabScript');
             this.tile.name = 'tile ' + index;
@@ -44,52 +57,77 @@ cc.Class({
             this.script._index = index;
             this.tile.on('mousedown', this._onClick, this.tile);
         }
-        this._tileList[Math.floor(Math.random() * 9)].getComponent('prefabScript')._isBomb = true;
-        this._tileList[Math.floor(Math.random() * 9)].getComponent('prefabScript')._isBomb = true;
+        for (var i = 0; i < data.cellNumber / 2 / 2; i++) {
+            this._tileList[Math.floor(Math.random() * data.cellNumber)].getComponent('prefabScript')._isBomb = true;
+        }this._tileList.forEach(function (element, index, array) {
+            _this.collumn = 6;
+            _this.script = element.getComponent('prefabScript');
+            _this.info = getInfo(_this.collumn);
+
+            //check the number of bombs in 'this.info'
+            _this.script._bombCount = checkBomb(_this.info);
+
+            //check the number of safe spot in 'this.info'
+            _this.script._safeList = checkSafe(_this.info);
+
+            function getInfo(collumn) {
+                var info = [];
+                info.push(array[index - collumn], //top
+                array[index + collumn] //bottom
+                );
+
+                //check if this tile at the right border
+                // cc.log(index % (collumn));
+                if (index % collumn !== collumn - 1) {
+                    info.push(array[index + 1], //right
+                    array[index - collumn - 1], //top-right
+                    array[index + collumn + 1] //bottom-right
+                    );
+                }
+
+                //check if this tile at the left border
+                // cc.log(index % (collumn));
+                if (index % collumn !== 0) {
+                    info.push(array[index - 1], //left
+                    array[index - collumn + 1], //top-left
+                    array[index + collumn - 1] //bottom-left
+                    );
+                }
+                return info;
+            }
+
+            function checkBomb(array) {
+                var bombList = array.filter(function (element) {
+                    if (element === undefined) return false;
+                    return element.getComponent('prefabScript')._isBomb;
+                });
+                // cc.log(bombList);
+                return bombList.length;
+            }
+
+            function checkSafe(array) {
+                var safeList = array.filter(function (element) {
+                    if (element === undefined) return false;
+                    return !element.getComponent('prefabScript')._isBomb;
+                });
+                // cc.log(safeList);
+                return safeList;
+            }
+        });
     },
 
-    _onClick: function _onClick() {
-        this.list = this.parent.getComponent('gameBoardScript')._tileList;
-        this.gridSize = this.parent.getComponent('gameBoardScript')._gridSize;
-        this.index = this.getComponent('prefabScript')._index;
-        // cc.log(this.index);
-        this.info = [];
-        this.info.push(this.list[this.index - this.gridSize], //top
-        this.list[this.index + this.gridSize] //bottom
-        );
+    _reset: function _reset() {
+        Emitter.instance.emit('notPlaying');
 
-        //check if this tile at the right border
-        // cc.log(this.index % (this.gridSize))
-        if (this.index % this.gridSize !== this.gridSize - 1) {
-            this.info.push(this.list[this.index + 1], //right
-            this.list[this.index - this.gridSize - 1], //top-right
-            this.list[this.index + this.gridSize + 1] //bottom-right
-            );
-        }
+        // this._tileList.forEach(element => element.destroy());
+        this.node.destroyAllChildren(true);
+        cc.log(this.node.children);
+        this._tileList = [];
+    },
 
-        //check if this tile at the left border
-        // cc.log(this.index % (this.gridSize))
-        if (this.index % this.gridSize !== 0) {
-            this.info.push(this.list[this.index - 1], //left
-            this.list[this.index - this.gridSize + 1], //top-left
-            this.list[this.index + this.gridSize - 1] //bottom-left
-            );
-        }
+    _onClick: function _onClick(tile) {
 
-        //check the number of bombs in 'this.info'
-        this.bombCount = checkBomb(this.info);
-
-        //emit the information about the tiles around this tile.
-        Emitter.instance.emit('showTile', { index: this.index, bombCount: this.bombCount });
-
-        function checkBomb(array) {
-            var bombList = array.filter(function (element) {
-                if (element === undefined) return false;
-                return element.getComponent('prefabScript')._isBomb;
-            });
-            cc.log(bombList);
-            return bombList.length;
-        }
+        Emitter.instance.emit('showTile');
     },
 
     start: function start() {}

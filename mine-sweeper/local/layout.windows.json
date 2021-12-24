@@ -18,23 +18,23 @@
                 "children": [
                   "hierarchy"
                 ],
-                "height": 459.984375,
+                "height": 460,
                 "type": "panel",
-                "width": 307.40625
+                "width": 307
               },
               {
                 "active": 0,
                 "children": [
                   "assets"
                 ],
-                "height": 459.015625,
+                "height": 459,
                 "type": "panel",
-                "width": 307.40625
+                "width": 307
               }
             ],
             "height": 921,
             "type": "dock-v",
-            "width": 307.40625
+            "width": 307
           },
           {
             "children": [
@@ -45,7 +45,7 @@
                 ],
                 "height": 653,
                 "type": "panel",
-                "width": 1166.171875
+                "width": 1167
               },
               {
                 "active": 0,
@@ -56,12 +56,12 @@
                 ],
                 "height": 266,
                 "type": "panel",
-                "width": 1166.171875
+                "width": 1167
               }
             ],
             "height": 921,
             "type": "dock-v",
-            "width": 1166.171875
+            "width": 1167
           },
           {
             "active": 0,
@@ -72,7 +72,7 @@
             ],
             "height": 921,
             "type": "panel",
-            "width": 426.40625
+            "width": 426
           }
         ],
         "type": "dock-h"
@@ -90,5 +90,18 @@
       ]
     }
   },
-  "panels": {}
+  "panels": {
+    "preferences": {
+      "x": 662,
+      "y": 240,
+      "width": 600,
+      "height": 565
+    },
+    "sprite-editor": {
+      "x": 702,
+      "y": 240,
+      "width": 516,
+      "height": 539
+    }
+  }
 }
