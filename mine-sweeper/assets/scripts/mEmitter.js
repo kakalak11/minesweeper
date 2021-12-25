@@ -3,7 +3,7 @@ const EventEmitter = require('events');
 class mEmitter {
     constructor() {
         this._emiter = new EventEmitter();
-        this._emiter.setMaxListeners(100);
+        this._emiter.setMaxListeners(200);
     }
 
     emit(...args) {

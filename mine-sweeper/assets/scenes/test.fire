@@ -318,7 +318,7 @@
       "__id__": 2
     },
     "_children": [],
-    "_active": true,
+    "_active": false,
     "_level": 2,
     "_components": [
       {
@@ -497,8 +497,8 @@
     "_N$padding": 0,
     "_N$cellSize": {
       "__type__": "cc.Size",
-      "width": 50,
-      "height": 50
+      "width": 25,
+      "height": 25
     },
     "_N$startAxis": 0,
     "_N$paddingLeft": 0,

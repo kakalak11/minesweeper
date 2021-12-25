@@ -15,7 +15,7 @@ cc.Class({
     properties: {
         bombNumber: cc.Label,
         _index: 0,
-        _isBomb: null,
+        _isBomb: false,
         _safeList: [],
         _bombCount: 0,
     },
@@ -23,29 +23,33 @@ cc.Class({
     ctor() {
         this._colorList = [cc.Color.BLUE, cc.Color.RED, cc.Color.GREEN, cc.Color.BLUE, cc.Color.YELLOW, cc.Color.ORANGE, cc.Color.CYAN, cc.Color.MAGENTA, cc.Color.GRAY, cc.Color.RED];
     },
-    
+
     // LIFE-CYCLE CALLBACKS:
-    
+
     onLoad() {
         this.node.color = cc.Color.GRAY;
+        this._noBombList = this._safeList.filter(element => !element.getComponent('prefabScript')._isBomb && !element.getComponent('prefabScript')._bombCount);
         Emitter.instance.registerEvent('showTile', this._show.bind(this));
     },
-    
+
     // Display whether this tile is bomb or not else display the number of bomb around it using the data from the Emitter
-    _show: function () {
-        
-        cc.log(`the number of bombs is ${data.bombCount}`);
+    _show: function (data) {
+        if (this._index !== data.index) return;
+        // cc.log(`the number of bombs is ${this._bombCount}`);
         if (this._isBomb) this.node.color = cc.Color.RED;
-        else {
-            cc.log(this.node);
+        else if (!this._bombCount) {
             this.node.color = cc.Color.WHITE;
-            if (data.bombCount === 0) return;
+            this._noBombList.forEach(element => element.getComponent('prefabScript')._show({ index: element.getComponent('prefabScript')._index }));
+        } else {
+            // cc.log(this.node);
+            this.node.color = cc.Color.WHITE;
+            if (this._bombCount === 0) return;
             this.bombNumber.string = this._bombCount;
             this.bombNumber.node.active = true;
-            this.bombNumber.node.color = this._colorList[data.bombCount - 1];
+            this.bombNumber.node.color = this._colorList[this._bombCount - 1];
         }
     },
-    
+
     start() {
     },
 

@@ -15,7 +15,7 @@ var mEmitter = function () {
         _classCallCheck(this, mEmitter);
 
         this._emiter = new EventEmitter();
-        this._emiter.setMaxListeners(100);
+        this._emiter.setMaxListeners(200);
     }
 
     _createClass(mEmitter, [{

@@ -20,7 +20,7 @@ cc.Class({
 
     properties: {
         tilePrefab: cc.Prefab,
-        _collumn: 6,
+        _collumn: 0,
         _tileList: []
     },
 
@@ -34,7 +34,7 @@ cc.Class({
 
         //show all the tile for debug
 
-        // cc.log(this._collumn);
+        cc.log(this.node.children);
     },
 
 
@@ -45,10 +45,11 @@ cc.Class({
 
         this.node.getComponent(cc.Layout).cellSize.height = data.cellSize;
         this.node.getComponent(cc.Layout).cellSize.width = data.cellSize;
-        this._row = data.cellNumber / 6;
-        cc.log(this.node.getComponent(cc.Layout).cellSize.height, this.node.getComponent(cc.Layout).cellSize.width);
 
-        for (var index = 0; index < data.cellNumber; index++) {
+        this._collumn = data.collumn;
+        // cc.log(this.node.getComponent(cc.Layout).cellSize.height, this.node.getComponent(cc.Layout).cellSize.width);
+
+        for (var index = 0; index < data.row * data.collumn; index++) {
             this.tile = cc.instantiate(this.tilePrefab);
             this.script = this.tile.getComponent('prefabScript');
             this.tile.name = 'tile ' + index;
@@ -57,12 +58,11 @@ cc.Class({
             this.script._index = index;
             this.tile.on('mousedown', this._onClick, this.tile);
         }
-        for (var i = 0; i < data.cellNumber / 2 / 2; i++) {
-            this._tileList[Math.floor(Math.random() * data.cellNumber)].getComponent('prefabScript')._isBomb = true;
+        for (var i = 0; i < data.row * data.collumn / 2 / 2; i++) {
+            this._tileList[Math.floor(Math.random() * (data.row * data.collumn))].getComponent('prefabScript')._isBomb = true;
         }this._tileList.forEach(function (element, index, array) {
-            _this.collumn = 6;
             _this.script = element.getComponent('prefabScript');
-            _this.info = getInfo(_this.collumn);
+            _this.info = getInfo(_this._collumn);
 
             //check the number of bombs in 'this.info'
             _this.script._bombCount = checkBomb(_this.info);
@@ -77,10 +77,10 @@ cc.Class({
                 );
 
                 //check if this tile at the right border
-                // cc.log(index % (collumn));
+                // cc.log(index % collumn);
                 if (index % collumn !== collumn - 1) {
                     info.push(array[index + 1], //right
-                    array[index - collumn - 1], //top-right
+                    array[index - collumn + 1], //top-right
                     array[index + collumn + 1] //bottom-right
                     );
                 }
@@ -89,7 +89,7 @@ cc.Class({
                 // cc.log(index % (collumn));
                 if (index % collumn !== 0) {
                     info.push(array[index - 1], //left
-                    array[index - collumn + 1], //top-left
+                    array[index - collumn - 1], //top-left
                     array[index + collumn - 1] //bottom-left
                     );
                 }
@@ -125,9 +125,8 @@ cc.Class({
         this._tileList = [];
     },
 
-    _onClick: function _onClick(tile) {
-
-        Emitter.instance.emit('showTile');
+    _onClick: function _onClick() {
+        Emitter.instance.emit('showTile', { index: this.getComponent('prefabScript')._index });
     },
 
     start: function start() {}

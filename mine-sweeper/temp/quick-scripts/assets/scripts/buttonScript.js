@@ -25,11 +25,11 @@ cc.Class({
     // LIFE-CYCLE CALLBACKS:
 
     onClickDifficulty: function onClickDifficulty(event, data) {
-        cc.log(data);
+        // cc.log(data);
         if (this._playing) Emitter.instance.emit('gameStop');
         if (data === 'easy') Emitter.instance.emit('gameStart', { cellNumber: 48, cellSize: 50 });
-        if (data === 'medium') Emitter.instance.emit('gameStart', { cellNumber: 54, cellSize: 50 });
-        if (data === 'hard') Emitter.instance.emit('gameStart', { cellNumber: 60, cellSize: 50 });
+        if (data === 'medium') Emitter.instance.emit('gameStart', { row: 10, collumn: 6, cellSize: 50 });
+        if (data === 'hard') Emitter.instance.emit('gameStart', { row: 18, collumn: 11, cellSize: 25 });
 
         return;
     },

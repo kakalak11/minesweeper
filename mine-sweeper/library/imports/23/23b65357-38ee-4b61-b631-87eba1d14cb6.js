@@ -49,15 +49,15 @@ cc.Class({
         switch (event.keyCode) {
             //easy
             case cc.macro.KEY.x:
-                Emitter.instance.emit('gameStart', { cellNumber: 48, cellSize: 50 });
+                // Emitter.instance.emit('gameStart', { cellNumber: 48, cellSize: 50 });
                 break;
             //medium
             case cc.macro.KEY.c:
-                Emitter.instance.emit('gameStart', { cellNumber: 54, cellSize: 50 });
+                // Emitter.instance.emit('gameStart', { cellNumber: 60, cellSize: 50 });
                 break;
             //hard
             case cc.macro.KEY.v:
-                Emitter.instance.emit('gameStart', { cellNumber: 60, cellSize: 50 });
+                // Emitter.instance.emit('gameStart', { cellNumber: 198, cellSize: 25 });
                 break;
             //reset
             case cc.macro.KEY.b:
