@@ -1,78 +1,85 @@
-2021-12-25T03:08:42.617Z - normal: Load ~/.CocosCreator/settings.json
-2021-12-25T03:08:43.928Z - normal: Initializing Asset Database
-2021-12-25T03:08:43.988Z - normal: checking language setting...
-2021-12-25T03:08:43.988Z - normal: Language: en
-2021-12-25T03:08:46.577Z - success: preview server running at http://localhost:7456
-2021-12-25T03:08:46.579Z - success: protocol editor-framework registered
-2021-12-25T03:08:46.580Z - success: protocol app registered
-2021-12-25T03:08:46.580Z - success: protocol theme registered
-2021-12-25T03:08:46.580Z - success: protocol packages registered
-2021-12-25T03:08:46.580Z - success: protocol uuid registerred
-2021-12-25T03:08:46.580Z - success: protocol db registerred
-2021-12-25T03:08:46.580Z - success: protocol thumbnail registerred
-2021-12-25T03:08:46.580Z - success: protocol unpack registerred
-2021-12-25T03:08:46.580Z - success: protocol disable-commonjs registerred
-2021-12-25T03:08:48.082Z - normal: connected!
-2021-12-25T03:08:48.083Z - normal: Check project G:\Cocos\minesweeper\mine-sweeper
-2021-12-25T03:08:48.085Z - normal: Initializing project G:\Cocos\minesweeper\mine-sweeper
-2021-12-25T03:08:48.900Z - normal: Initializing Cocos2d
-2021-12-25T03:08:53.681Z - normal: Initializing engine extends
-2021-12-25T03:08:54.183Z - success: alipay-adapter loaded
-2021-12-25T03:08:54.199Z - success: asset-db-debugger loaded
-2021-12-25T03:08:54.205Z - success: baidu-adapter loaded
-2021-12-25T03:08:54.214Z - success: color-picker loaded
-2021-12-25T03:08:54.516Z - success: fb-audience-network loaded
-2021-12-25T03:08:54.628Z - success: fb-live-stream loaded
-2021-12-25T03:08:54.644Z - success: google-play-instant loaded
-2021-12-25T03:08:54.719Z - success: huawei-runtime loaded
-2021-12-25T03:08:56.044Z - success: cpk-publish loaded
-2021-12-25T03:08:56.048Z - success: jsb-adapter loaded
-2021-12-25T03:08:56.118Z - success: oppo-runtime loaded
-2021-12-25T03:08:56.133Z - success: package-manager loaded
-2021-12-25T03:08:56.694Z - success: qqplay-adapter loaded
-2021-12-25T03:08:56.722Z - success: runtime-dev-tools loaded
-2021-12-25T03:08:56.758Z - success: sdkbox loaded
-2021-12-25T03:08:56.776Z - success: tester loaded
-2021-12-25T03:08:56.790Z - success: ui-kit-preview-extra loaded
-2021-12-25T03:08:56.814Z - success: ui-kit-preview loaded
-2021-12-25T03:08:56.816Z - success: ui-kit loaded
-2021-12-25T03:08:56.888Z - success: vivo-runtime loaded
-2021-12-25T03:08:56.893Z - success: weapp-adapter loaded
-2021-12-25T03:08:56.898Z - success: xiaomi-adapter loaded
-2021-12-25T03:08:56.920Z - success: alipay-minigame loaded
-2021-12-25T03:08:56.976Z - success: assets loaded
-2021-12-25T03:08:56.978Z - success: builder loaded
-2021-12-25T03:08:57.569Z - success: cocos-services loaded
-2021-12-25T03:08:57.574Z - success: console loaded
-2021-12-25T03:08:57.612Z - success: fb-instant-games loaded
-2021-12-25T03:08:57.615Z - success: game-window loaded
-2021-12-25T03:08:57.616Z - success: google-instant-games loaded
-2021-12-25T03:08:57.620Z - success: hierarchy loaded
-2021-12-25T03:08:57.623Z - success: inspector loaded
-2021-12-25T03:08:57.624Z - success: keystore loaded
-2021-12-25T03:08:57.628Z - success: node-library loaded
-2021-12-25T03:08:57.629Z - success: package-asset loaded
-2021-12-25T03:08:57.631Z - success: preferences loaded
-2021-12-25T03:08:57.632Z - success: project-exporter loaded
-2021-12-25T03:08:57.634Z - success: project-importer loaded
-2021-12-25T03:08:57.636Z - success: project-settings loaded
-2021-12-25T03:08:57.639Z - success: scene loaded
-2021-12-25T03:08:57.641Z - success: simulator-debugger loaded
-2021-12-25T03:08:57.642Z - success: sprite-editor loaded
-2021-12-25T03:08:57.645Z - success: store loaded
-2021-12-25T03:08:57.650Z - success: timeline loaded
-2021-12-25T03:08:57.654Z - success: xiaomi-runtime loaded
-2021-12-25T03:09:00.676Z - normal: Loading packages
-2021-12-25T03:09:00.682Z - normal: Watching packages
-2021-12-25T03:09:01.333Z - normal: Run Application
-2021-12-25T03:09:02.132Z - info: Cocos Services load base data!
-2021-12-25T03:41:25.022Z - info: Only the prefab node "tilePrefab" and its child nodes are saved.
-2021-12-25T03:42:01.542Z - info: Only the prefab node "tilePrefab" and its child nodes are saved.
-2021-12-25T03:42:27.580Z - info: Only the prefab node "tilePrefab" and its child nodes are saved.
-2021-12-25T03:42:31.843Z - info: Only the prefab node "tilePrefab" and its child nodes are saved.
-2021-12-25T04:37:37.452Z - warn: Script attached to "tilePrefab" in prefab "tilePrefab.prefab" is missing or invalid. Detailed information:
-Node path: "tilePrefab"
-Asset url: "db://assets/prefab/tilePrefab.prefab"
-Script UUID: "ec497b50-6497-466a-bd5e-5c728f6b93cc"
-Class ID: "ec497tQZJdGar1eXHKPa5PM"
-
+2021-12-25T12:50:22.634Z - normal: Load ~/.CocosCreator/settings.json
+2021-12-25T12:50:23.838Z - normal: Initializing Asset Database
+2021-12-25T12:50:23.878Z - normal: checking language setting...
+2021-12-25T12:50:23.878Z - normal: Language: en
+2021-12-25T12:50:26.450Z - success: preview server running at http://localhost:7456
+2021-12-25T12:50:26.453Z - success: protocol editor-framework registered
+2021-12-25T12:50:26.453Z - success: protocol app registered
+2021-12-25T12:50:26.453Z - success: protocol theme registered
+2021-12-25T12:50:26.453Z - success: protocol packages registered
+2021-12-25T12:50:26.453Z - success: protocol uuid registerred
+2021-12-25T12:50:26.453Z - success: protocol db registerred
+2021-12-25T12:50:26.453Z - success: protocol thumbnail registerred
+2021-12-25T12:50:26.454Z - success: protocol unpack registerred
+2021-12-25T12:50:26.454Z - success: protocol disable-commonjs registerred
+2021-12-25T12:50:28.102Z - normal: connected!
+2021-12-25T12:50:28.103Z - normal: Check project G:\Cocos\minesweeper\mine-sweeper
+2021-12-25T12:50:28.105Z - normal: Initializing project G:\Cocos\minesweeper\mine-sweeper
+2021-12-25T12:50:28.944Z - normal: Initializing Cocos2d
+2021-12-25T12:50:33.493Z - normal: Initializing engine extends
+2021-12-25T12:50:33.856Z - success: alipay-adapter loaded
+2021-12-25T12:50:33.872Z - success: asset-db-debugger loaded
+2021-12-25T12:50:33.878Z - success: baidu-adapter loaded
+2021-12-25T12:50:33.886Z - success: color-picker loaded
+2021-12-25T12:50:34.187Z - success: fb-audience-network loaded
+2021-12-25T12:50:34.279Z - success: fb-live-stream loaded
+2021-12-25T12:50:34.294Z - success: google-play-instant loaded
+2021-12-25T12:50:34.371Z - success: huawei-runtime loaded
+2021-12-25T12:50:35.641Z - success: cpk-publish loaded
+2021-12-25T12:50:35.646Z - success: jsb-adapter loaded
+2021-12-25T12:50:35.712Z - success: oppo-runtime loaded
+2021-12-25T12:50:35.728Z - success: package-manager loaded
+2021-12-25T12:50:36.230Z - success: qqplay-adapter loaded
+2021-12-25T12:50:36.257Z - success: runtime-dev-tools loaded
+2021-12-25T12:50:36.295Z - success: sdkbox loaded
+2021-12-25T12:50:36.315Z - success: tester loaded
+2021-12-25T12:50:36.327Z - success: ui-kit-preview-extra loaded
+2021-12-25T12:50:36.350Z - success: ui-kit-preview loaded
+2021-12-25T12:50:36.352Z - success: ui-kit loaded
+2021-12-25T12:50:36.425Z - success: vivo-runtime loaded
+2021-12-25T12:50:36.429Z - success: weapp-adapter loaded
+2021-12-25T12:50:36.433Z - success: xiaomi-adapter loaded
+2021-12-25T12:50:36.456Z - success: alipay-minigame loaded
+2021-12-25T12:50:36.514Z - success: assets loaded
+2021-12-25T12:50:36.516Z - success: builder loaded
+2021-12-25T12:50:37.123Z - success: cocos-services loaded
+2021-12-25T12:50:37.127Z - success: console loaded
+2021-12-25T12:50:37.169Z - success: fb-instant-games loaded
+2021-12-25T12:50:37.172Z - success: game-window loaded
+2021-12-25T12:50:37.173Z - success: google-instant-games loaded
+2021-12-25T12:50:37.178Z - success: hierarchy loaded
+2021-12-25T12:50:37.181Z - success: inspector loaded
+2021-12-25T12:50:37.183Z - success: keystore loaded
+2021-12-25T12:50:37.187Z - success: node-library loaded
+2021-12-25T12:50:37.189Z - success: package-asset loaded
+2021-12-25T12:50:37.190Z - success: preferences loaded
+2021-12-25T12:50:37.192Z - success: project-exporter loaded
+2021-12-25T12:50:37.193Z - success: project-importer loaded
+2021-12-25T12:50:37.196Z - success: project-settings loaded
+2021-12-25T12:50:37.200Z - success: scene loaded
+2021-12-25T12:50:37.202Z - success: simulator-debugger loaded
+2021-12-25T12:50:37.203Z - success: sprite-editor loaded
+2021-12-25T12:50:37.207Z - success: store loaded
+2021-12-25T12:50:37.212Z - success: timeline loaded
+2021-12-25T12:50:37.217Z - success: xiaomi-runtime loaded
+2021-12-25T12:50:39.950Z - normal: Loading packages
+2021-12-25T12:50:39.955Z - normal: Watching packages
+2021-12-25T12:50:40.667Z - normal: Run Application
+2021-12-25T12:50:41.116Z - info: Cocos Services load base data!
+2021-12-25T13:03:45.474Z - error: Can not declare prefabScript._show method, it is already defined in the properties of prefabScript.
+    at Object.cc.errorID (G:\CocosCreator_2.1.3\resources\engine\bin\.cache\dev\cocos2d\core\CCDebug.js:167:16)
+    at Object.exports.doValidateMethodWithProps_DEV (G:\CocosCreator_2.1.3\resources\engine\bin\.cache\dev\cocos2d\core\platform\preprocess-class.js:248:24)
+    at Object.exports.validateMethodWithProps (G:\CocosCreator_2.1.3\resources\engine\bin\.cache\dev\cocos2d\core\platform\preprocess-class.js:263:26)
+    at Object.CCClass [as Class] (G:\CocosCreator_2.1.3\resources\engine\bin\.cache\dev\cocos2d\core\platform\CCClass.js:695:33)
+    at __define (G:\Cocos\minesweeper\mine-sweeper\temp\quick-scripts\assets\scripts\prefabScript.js:18:4)
+    at G:\Cocos\minesweeper\mine-sweeper\temp\quick-scripts\assets\scripts\prefabScript.js:85:13
+    at Object.<anonymous> (G:\Cocos\minesweeper\mine-sweeper\temp\quick-scripts\assets\scripts\prefabScript.js:92:11)
+    at Object.<anonymous> (G:\Cocos\minesweeper\mine-sweeper\temp\quick-scripts\assets\scripts\prefabScript.js:95:3)
+    at Module._compile (module.js:571:32)
+2021-12-25T14:27:29.832Z - info: Only the prefab node "tilePrefab" and its child nodes are saved.
+2021-12-25T14:27:31.779Z - info: Only the prefab node "tilePrefab" and its child nodes are saved.
+2021-12-25T14:29:03.274Z - info: Only the prefab node "tilePrefab" and its child nodes are saved.
+2021-12-25T14:30:00.797Z - info: Only the prefab node "tilePrefab" and its child nodes are saved.
+2021-12-25T14:31:11.743Z - info: Only the prefab node "tilePrefab" and its child nodes are saved.
+2021-12-25T14:38:53.324Z - info: Only the prefab node "tilePrefab" and its child nodes are saved.
+2021-12-25T14:43:55.680Z - info: Only the prefab node "tilePrefab" and its child nodes are saved.

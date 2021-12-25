@@ -25,7 +25,14 @@ cc.Class({
         // for (let i = 0; i < 16; i++) cc.log(i % 4)
         Emitter.instance.registerEvent('gameStart', this._start.bind(this));
         Emitter.instance.registerEvent('gameStop', this._reset.bind(this));
-
+        Emitter.instance.registerEvent('showAll', () => {
+            this._tileList.forEach(element => {
+                element.getComponent('prefabScript')._show();
+                this.gameBoardScript = element.parent.getComponent('gameBoardScript');
+                element.off('mouseenter', this.gameBoardScript._onEnter, this);
+                element.off('mouseleave', this.gameBoardScript._onLeave, this);
+            });
+        })
         //show all the tile for debug
 
         cc.log(this.node.children);
@@ -42,12 +49,17 @@ cc.Class({
 
         for (let index = 0; index < (data.row * data.collumn); index++) {
             this.tile = cc.instantiate(this.tilePrefab);
-            this.script = this.tile.getComponent('prefabScript');
-            this.tile.name = `tile ${index}`;
             this.node.addChild(this.tile);
+            this.script = this.tile.getComponent('prefabScript');
+            this.script.background.height = data.cellSize;
+            this.script.background.width = data.cellSize;
+            this.script.background.opacity = 0;
+            this.tile.name = `tile ${index}`;
             this._tileList.push(this.tile);
             this.script._index = index;
             this.tile.on('mousedown', this._onClick, this.tile);
+            this.tile.on('mouseenter', this._onEnter, this.tile);
+            this.tile.on('mouseleave', this._onLeave, this.tile);
         }
         for (let i = 0; i < (data.row * data.collumn) / 2 / 2; i++) this._tileList[Math.floor(Math.random() * (data.row * data.collumn))].getComponent('prefabScript')._isBomb = true;
 
@@ -120,7 +132,37 @@ cc.Class({
     },
 
     _onClick: function () {
-        Emitter.instance.emit('showTile', { index: this.getComponent('prefabScript')._index });
+        // cc.log(this);
+        // Emitter.instance.emit('showTile', { index: this.getComponent('prefabScript')._index });
+        this.getComponent('prefabScript').background.opacity = 0;
+        this.getComponent('prefabScript')._show();
+        this.gameBoardScript = this.parent.getComponent('gameBoardScript');
+        this.off('mouseenter', this.gameBoardScript._onEnter, this);
+        this.off('mouseleave', this.gameBoardScript._onLeave, this);
+    },
+
+    _onEnter: function () {
+        this.isShow = this.getComponent('prefabScript')._isShow;
+        if (this.isShow) {
+            this.gameBoardScript = this.parent.getComponent('gameBoardScript');
+            this.off('mouseenter', this.gameBoardScript._onEnter, this);
+            this.off('mouseleave', this.gameBoardScript._onLeave, this);
+            return;
+        }
+        // this.color = cc.color(167, 167, 167, 255);
+        this.getComponent('prefabScript').background.opacity = 255 / 2;
+    },
+
+    _onLeave: function () {
+        this.isShow = this.getComponent('prefabScript')._isShow;
+        if (this.isShow) {
+            this.gameBoardScript = this.parent.getComponent('gameBoardScript');
+            this.off('mouseenter', this.gameBoardScript._onEnter, this);
+            this.off('mouseleave', this.gameBoardScript._onLeave, this);
+            return;
+        }
+        // this.color = cc.Color.GRAY;
+        this.getComponent('prefabScript').background.opacity = 0;
     },
 
     start() {
