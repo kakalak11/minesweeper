@@ -1,4 +1,4 @@
-import { Size, UITransform, Vec2 } from 'cc';
+import { Size, tween, UIOpacity, UITransform, Vec2 } from 'cc';
 import { Prefab } from 'cc';
 import { Sprite } from 'cc';
 import { Color } from 'cc';
@@ -193,12 +193,31 @@ export class MinesweeperManager extends Component {
     }
 
     revealAllMines() {
-        this.loseScene.active = true;
         this.table.pauseSystemEvents(true);
+
+        let tweenRevealAllMines = tween(this);
 
         this.table.getComponentsInChildren(BoxManager)
             .filter(box => !box.isRevealed && box.value == -1)
-            .forEach(box => box.revealMine());
+            .forEach(box => {
+                tweenRevealAllMines
+                    .delay(0.2)
+                    .call(() => {
+                        box.revealMine();
+                    });
+            });
+
+        tweenRevealAllMines
+            .call(() => {
+                this.loseScene.active = true;
+                const uiOpacity = this.loseScene.getComponent(UIOpacity);
+                uiOpacity.opacity = 0;
+
+                tween(uiOpacity)
+                    .to(0.3, { opacity: 255 })
+                    .start()
+            })
+            .start();
     }
 
     onNewGame() {
