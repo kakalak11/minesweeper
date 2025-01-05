@@ -1,4 +1,4 @@
-import { UITransform } from 'cc';
+import { Size, UITransform } from 'cc';
 import { Prefab } from 'cc';
 import { Sprite } from 'cc';
 import { Color } from 'cc';
@@ -11,10 +11,10 @@ import { Toggle } from 'cc';
 import { Layout } from 'cc';
 const { ccclass, property } = _decorator;
 
-const NUMS_COL = 20;
-const NUMS_ROW = 20;
-// const NUMS_MINE = 40;
-const NUMS_MINE = 4;
+
+const NUMS_MINE = 40;
+// const NUMS_MINE = 4;
+const TILE_SIZE = new Size(48, 48);
 const DIM_COLOR = new Color(100, 100, 100);
 
 @ccclass('MinesweeperManager')
@@ -32,36 +32,44 @@ export class MinesweeperManager extends Component {
 
     flagCount: number = 0;
 
-    start() {
+    NUMS_COL: number = 20;
+    NUMS_ROW: number = 20;
 
+    start() {
         this.initGrid();
+        // this.initData();
     }
 
     initGrid() {
+        this.table.getComponent(Layout).cellSize = TILE_SIZE;
+        const [maxCol, maxRow] = calcGrid(this.table.getComponent(Layout));
+        this.NUMS_COL = maxCol; this.NUMS_ROW = maxRow;
+
         this.boxGrid = [];
         let index = 0;
-        for (let col = 0; col < NUMS_COL; col++) {
+        this.table.destroyAllChildren();
+        for (let col = 0; col < this.NUMS_COL; col++) {
             this.boxGrid[col] = [];
-            for (let row = 0; row < NUMS_ROW; row++) {
+            for (let row = 0; row < this.NUMS_ROW; row++) {
                 const box = instantiate(this.boxPrefab);
 
                 this.table.addChild(box);
                 box.name += index.toString();
-                // box.getComponent(BoxManager).init(0, col, row);
                 this.boxGrid[col][row] = box.getComponent(BoxManager);
                 index++;
             }
         }
-        calculatePaddingLayout(this.table.getComponent(Layout));
+
+        calculatePaddingLayout(this.NUMS_COL, this.NUMS_ROW, this.table.getComponent(Layout));
         this.table.on(Node.EventType.TOUCH_END, this.onTouchEnd, this);
     }
 
     initData(initCol?, initRow?) {
-        const grid = generateMinesweeperGrid(NUMS_COL, NUMS_ROW, NUMS_MINE, initCol, initRow);
+        const grid = generateMinesweeperGrid(this.NUMS_ROW, this.NUMS_COL, NUMS_MINE, initCol, initRow);
         this.grid = grid;
 
-        for (let col = 0; col < NUMS_COL; col++) {
-            for (let row = 0; row < NUMS_ROW; row++) {
+        for (let col = 0; col < this.NUMS_COL; col++) {
+            for (let row = 0; row < this.NUMS_ROW; row++) {
                 const box = this.boxGrid[col][row];
                 box.init(this.grid[col][row], col, row);
             }
@@ -81,6 +89,7 @@ export class MinesweeperManager extends Component {
                 break;
             }
         }
+
         if (!touchedBox) return;
         if (this.isFirstTouch) {
             this.isFirstTouch = false;
@@ -120,11 +129,10 @@ export class MinesweeperManager extends Component {
             for (let j = -1; j <= 1; j++) {
                 const c = col + j;
                 const r = row + i;
-                const isValidBox = r >= 0 && r < NUMS_ROW && c >= 0 && c < NUMS_COL;
+                const isValidBox = r >= 0 && r < this.NUMS_ROW && c >= 0 && c < this.NUMS_COL;
 
                 if (isValidBox && this.grid[c][r] !== -1) {
                     this.revealNeighbors(this.boxGrid[c][r]);
-                    // if (!this.boxGrid[c][r].isRevealed) this.boxGrid[c][r].reveal();
                 }
             }
         }
@@ -147,8 +155,8 @@ function generateMinesweeperGrid(rows, cols, mines, exCol?, exRow?) {
     ];
 
     // Generate an empty grid
-    for (let row = 0; row < rows; row++) {
-        grid.push(new Array(cols).fill(0));
+    for (let col = 0; col < cols; col++) {
+        grid.push(new Array(rows).fill(0));
     }
 
     // Function to check for mine clusters
@@ -159,7 +167,7 @@ function generateMinesweeperGrid(rows, cols, mines, exCol?, exRow?) {
                 if (i === 0 && j === 0) continue; // Skip the current cell
                 const r = row + i;
                 const c = col + j;
-                if (r >= 0 && r < rows && c >= 0 && c < cols && mineLocations.some(([x, y]) => x === r && y === c)) {
+                if (r >= 0 && r < rows && c >= 0 && c < cols && mineLocations.some(([x, y]) => x === c && y === r)) {
                     clusterCount++;
                 }
             }
@@ -175,9 +183,9 @@ function generateMinesweeperGrid(rows, cols, mines, exCol?, exRow?) {
             const row = Math.floor(Math.random() * rows);
             const col = Math.floor(Math.random() * cols);
 
-            if (!mineLocations.some(([r, c]) => r === row && c === col) && !hasMineCluster(row, col)) {
-                mineLocations.push([row, col]);
-                grid[row][col] = -1; // Mark mine locations
+            if (!mineLocations.some(([c, r]) => r === row && c === col) && !hasMineCluster(row, col)) {
+                mineLocations.push([col, row]);
+                grid[col][row] = -1; // Mark mine locations
                 break;
             }
 
@@ -190,37 +198,49 @@ function generateMinesweeperGrid(rows, cols, mines, exCol?, exRow?) {
     // console.log(mineLocations);
 
     // Calculate mine counts for each cell
-    for (let row = 0; row < rows; row++) {
-        for (let col = 0; col < cols; col++) {
-            if (grid[row][col] !== -1) {
+    for (let col = 0; col < cols; col++) {
+        for (let row = 0; row < rows; row++) {
+            if (grid[col][row] !== -1) {
                 let mineCount = 0;
                 for (let i = -1; i <= 1; i++) {
                     for (let j = -1; j <= 1; j++) {
                         const r = row + i;
                         const c = col + j;
-                        if (r >= 0 && r < rows && c >= 0 && c < cols && grid[r][c] === -1) {
+                        if (r >= 0 && r < rows && c >= 0 && c < cols && grid[c][r] === -1) {
                             mineCount++;
                         }
                     }
                 }
-                grid[row][col] = mineCount;
+                grid[col][row] = mineCount;
             }
         }
     }
-
-    // excludes.forEach(([exCol, exRow]) => {
-    //     grid[exCol][exRow] = 0;
-    // });
     if (exCol && exRow) grid[exCol][exRow] = 0;
 
     return grid;
 }
 
-function calculatePaddingLayout(layout: Layout) {
+function calculatePaddingLayout(col, row, layout: Layout) {
 
     const cellSize = layout.cellSize.clone();
     const nodeSize = layout.node.getComponent(UITransform).contentSize.clone();
 
-    const padding = nodeSize.width - cellSize.width * layout.constraintNum;
-    layout.padding = padding / 2;
+    const paddingLeftRight = (nodeSize.width - cellSize.width * col) / 2;
+    const paddingTopBot = (nodeSize.height - cellSize.height * row) / 2;
+
+    console.log("paddingLeftRight ", paddingLeftRight, "paddingTopBot ", paddingTopBot);
+
+    // layout.paddingTop = paddingLeftRight; layout.paddingBottom = 0;
+    layout.paddingBottom = paddingTopBot, layout.paddingTop = paddingTopBot;
+    layout.paddingLeft = paddingLeftRight, layout.paddingRight = paddingLeftRight;
+
+}
+
+function calcGrid(layout: Layout) {
+    const nodeTrans = layout.node.getComponent(UITransform);
+
+    const maxCol = Math.floor(nodeTrans.width / TILE_SIZE.width) - 1;
+    const maxRow = Math.floor(nodeTrans.height / TILE_SIZE.height) - 1;
+
+    return [maxCol, maxRow];
 }
