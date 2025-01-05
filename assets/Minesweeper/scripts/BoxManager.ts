@@ -43,7 +43,7 @@ export class BoxManager extends Component {
         // console.log(`=== Reveal box of col ${this.col} and row ${this.row} ===`);
         if (this.value == -1) {
             this.isMine = true;
-            this._static.spriteFrame = this.mine;
+            this._static.spriteFrame = this.exploded;
         } else if (this.value == 0) {
             this.isEmpty = true;
             this._static.spriteFrame = this.empty;
@@ -51,6 +51,11 @@ export class BoxManager extends Component {
             this._static.spriteFrame = this.values[this.value - 1];
         }
         this.isRevealed = true;
+    }
+
+    revealMine() {
+        this.isMine = true;
+        this._static.spriteFrame = this.mine;
     }
 
     setFlag() {

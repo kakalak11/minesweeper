@@ -1,4 +1,4 @@
-import { Size, UITransform } from 'cc';
+import { Size, UITransform, Vec2 } from 'cc';
 import { Prefab } from 'cc';
 import { Sprite } from 'cc';
 import { Color } from 'cc';
@@ -25,6 +25,7 @@ export class MinesweeperManager extends Component {
     @property(Prefab) boxPrefab: Prefab;
     @property(Toggle) flagToggle: Toggle;
     @property(Node) winScene: Node;
+    @property(Node) loseScene: Node;
 
     grid: number[][];
     boxGrid: BoxManager[][];
@@ -64,6 +65,7 @@ export class MinesweeperManager extends Component {
 
         calculatePaddingLayout(this.NUMS_COL, this.NUMS_ROW, this.table.getComponent(Layout));
         this.table.on(Node.EventType.TOUCH_END, this.onTouchEnd, this);
+        this.table.resumeSystemEvents(true);
     }
 
     initData(initCol?, initRow?) {
@@ -101,12 +103,7 @@ export class MinesweeperManager extends Component {
 
     onTouchHold(touchedBox: BoxManager) {
         if (touchedBox && !touchedBox.isRevealed) {
-            touchedBox.setFlag();
-            this.flagCount += !touchedBox.isFlagged || touchedBox.isFlagged && touchedBox.isMine ? 1 : -1;
-
-            if (this.flagCount == NUMS_MINE) {
-                this.winScene.active = true;
-            }
+            this.setFlagBox(touchedBox);
         }
         this.touchHoldCallback = null;
         this.isHoldTouch = true;
@@ -117,6 +114,11 @@ export class MinesweeperManager extends Component {
             this.isHoldTouch = false;
             return;
         }
+        if (this.touchHoldCallback) {
+            this.unschedule(this.touchHoldCallback);
+        }
+        if (!isValidTouch(evt)) return;
+
         const isUseFlag = this.flagToggle.isChecked;
         const uiPoint = evt.getUILocation();
         let touchedBox: BoxManager;
@@ -130,10 +132,8 @@ export class MinesweeperManager extends Component {
             }
         }
 
-        if (!touchedBox) return;
-        if (this.touchHoldCallback) {
-            this.unschedule(this.touchHoldCallback);
-        }
+        if (!touchedBox || touchedBox.isFlagged) return;
+
 
         if (this.isFirstTouch) {
             this.isFirstTouch = false;
@@ -143,15 +143,18 @@ export class MinesweeperManager extends Component {
         }
 
         if (isUseFlag && !touchedBox.isRevealed) {
-            touchedBox.setFlag();
-            this.flagCount += !touchedBox.isFlagged || touchedBox.isFlagged && touchedBox.isMine ? 1 : -1;
-
-            if (this.flagCount == NUMS_MINE) {
-                this.winScene.active = true;
-            }
-
+            this.setFlagBox(touchedBox);
         } else {
             this.revealNeighbors(touchedBox);
+        }
+    }
+
+    setFlagBox(box: BoxManager) {
+        box.setFlag();
+        this.flagCount += !box.isFlagged || box.isFlagged && box.isMine ? 1 : -1;
+
+        if (this.flagCount == NUMS_MINE) {
+            this.winScene.active = true;
         }
     }
 
@@ -164,6 +167,9 @@ export class MinesweeperManager extends Component {
             return;
         } else {
             box.reveal();
+            if (box.isMine) {
+                this.loseGame();
+            }
             if (this.grid[col][row] !== 0) {
                 return;
             }
@@ -182,10 +188,25 @@ export class MinesweeperManager extends Component {
         }
     }
 
+    loseGame() {
+        this.revealAllMines();
+    }
+
+    revealAllMines() {
+        this.loseScene.active = true;
+        this.table.pauseSystemEvents(true);
+
+        this.table.getComponentsInChildren(BoxManager)
+            .filter(box => !box.isRevealed && box.value == -1)
+            .forEach(box => box.revealMine());
+    }
+
     onNewGame() {
-        this.initData();
+        this.initGrid();
+        this.table.off(Node.EventType.TOUCH_START);
         this.isFirstTouch = true;
         this.winScene.active = false;
+        this.loseScene.active = false;
         this.flagCount = 0;
     }
 
@@ -287,4 +308,10 @@ function calcGrid(layout: Layout) {
     const maxRow = Math.floor(nodeTrans.height / TILE_SIZE.height) - 1;
 
     return [maxCol, maxRow];
+}
+
+function isValidTouch(evt: EventTouch) {
+    const deltaVec = evt.getUIStartLocation().subtract(evt.getUILocation());
+
+    return Math.abs(deltaVec.x) < TILE_SIZE.width / 2 && Math.abs(deltaVec.y) < TILE_SIZE.height / 2;
 }
