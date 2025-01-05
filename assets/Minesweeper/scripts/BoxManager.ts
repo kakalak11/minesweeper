@@ -24,6 +24,10 @@ export class BoxManager extends Component {
 
     _static: Sprite;
 
+    protected start(): void {
+        this._static = this.node.getComponent(Sprite);
+    }
+
     init(value, col, row) {
         this.value = value;
         this.col = col;
@@ -32,7 +36,6 @@ export class BoxManager extends Component {
         this.isEmpty = false;
         this.isFlagged = false;
         this.isMine = false;
-        this._static = this.node.getComponent(Sprite);
         this._static.spriteFrame = this.unknown;
     }
 

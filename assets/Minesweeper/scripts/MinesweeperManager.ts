@@ -29,6 +29,8 @@ export class MinesweeperManager extends Component {
     grid: number[][];
     boxGrid: BoxManager[][];
     isFirstTouch: boolean = true;
+    isHoldTouch: boolean;
+    touchHoldCallback: (touchedBox: BoxManager) => void;
 
     flagCount: number = 0;
 
@@ -74,9 +76,47 @@ export class MinesweeperManager extends Component {
                 box.init(this.grid[col][row], col, row);
             }
         }
+        this.table.on(Node.EventType.TOUCH_START, this.onTouchStart, this);
+    }
+
+    onTouchStart(evt: EventTouch) {
+        const uiPoint = evt.getUILocation();
+        let touchedBox: BoxManager;
+
+        for (let i = 0; i < this.table.children.length; i++) {
+            const node = this.table.children[i];
+            const boundingBox = node.getComponent(UITransform).getBoundingBoxToWorld();
+            if (!node.getComponent(BoxManager).isRevealed && boundingBox.contains(uiPoint)) {
+                touchedBox = node.getComponent(BoxManager);
+                break;
+            }
+        }
+
+        if (touchedBox) {
+            this.touchHoldCallback = this.onTouchHold.bind(this, touchedBox);
+            this.scheduleOnce(this.touchHoldCallback, 0.2);
+        }
+
+    }
+
+    onTouchHold(touchedBox: BoxManager) {
+        if (touchedBox && !touchedBox.isRevealed) {
+            touchedBox.setFlag();
+            this.flagCount += !touchedBox.isFlagged || touchedBox.isFlagged && touchedBox.isMine ? 1 : -1;
+
+            if (this.flagCount == NUMS_MINE) {
+                this.winScene.active = true;
+            }
+        }
+        this.touchHoldCallback = null;
+        this.isHoldTouch = true;
     }
 
     onTouchEnd(evt: EventTouch) {
+        if (this.isHoldTouch) {
+            this.isHoldTouch = false;
+            return;
+        }
         const isUseFlag = this.flagToggle.isChecked;
         const uiPoint = evt.getUILocation();
         let touchedBox: BoxManager;
@@ -91,6 +131,10 @@ export class MinesweeperManager extends Component {
         }
 
         if (!touchedBox) return;
+        if (this.touchHoldCallback) {
+            this.unschedule(this.touchHoldCallback);
+        }
+
         if (this.isFirstTouch) {
             this.isFirstTouch = false;
             this.initData(touchedBox.col, touchedBox.row);
@@ -225,8 +269,8 @@ function calculatePaddingLayout(col, row, layout: Layout) {
     const cellSize = layout.cellSize.clone();
     const nodeSize = layout.node.getComponent(UITransform).contentSize.clone();
 
-    const paddingLeftRight = (nodeSize.width - cellSize.width * col) / 2;
-    const paddingTopBot = (nodeSize.height - cellSize.height * row) / 2;
+    const paddingLeftRight = Math.floor((nodeSize.width - cellSize.width * col) / 2);
+    const paddingTopBot = Math.floor((nodeSize.height - cellSize.height * row) / 2);
 
     console.log("paddingLeftRight ", paddingLeftRight, "paddingTopBot ", paddingTopBot);
 
