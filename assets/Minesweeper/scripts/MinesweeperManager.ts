@@ -9,6 +9,7 @@ import { _decorator, Component, Node } from 'cc';
 import { BoxManager } from './BoxManager';
 import { Toggle } from 'cc';
 import { Layout } from 'cc';
+import { Label } from 'cc';
 const { ccclass, property } = _decorator;
 
 
@@ -26,12 +27,17 @@ export class MinesweeperManager extends Component {
     @property(Toggle) flagToggle: Toggle;
     @property(Node) winScene: Node;
     @property(Node) loseScene: Node;
+    @property(Node) gameIntroScene: Node;
+
+    @property(Label) timeLabel: Label;
+    @property(Label) flagLabel: Label;
 
     grid: number[][];
     boxGrid: BoxManager[][];
     isFirstTouch: boolean = true;
     isHoldTouch: boolean;
     touchHoldCallback: (touchedBox: BoxManager) => void;
+    _updateTime: () => void;
 
     flagCount: number = 0;
 
@@ -39,7 +45,7 @@ export class MinesweeperManager extends Component {
     NUMS_ROW: number = 20;
 
     start() {
-        this.initGrid();
+        // this.initGrid();
         // this.initData();
     }
 
@@ -59,6 +65,7 @@ export class MinesweeperManager extends Component {
                 this.table.addChild(box);
                 box.name += index.toString();
                 this.boxGrid[col][row] = box.getComponent(BoxManager);
+                box.getComponent(BoxManager).init(0, col, row);
                 index++;
             }
         }
@@ -134,7 +141,6 @@ export class MinesweeperManager extends Component {
 
         if (!touchedBox || touchedBox.isFlagged) return;
 
-
         if (this.isFirstTouch) {
             this.isFirstTouch = false;
             this.initData(touchedBox.col, touchedBox.row);
@@ -156,6 +162,8 @@ export class MinesweeperManager extends Component {
         if (this.flagCount == NUMS_MINE) {
             this.winScene.active = true;
         }
+        const countFlag = this.table.getComponentsInChildren(BoxManager).filter(box => box.isFlagged).length;
+        this.flagLabel.string = `${countFlag} / ${NUMS_MINE}`;
     }
 
     revealNeighbors(box: BoxManager) {
@@ -226,7 +234,24 @@ export class MinesweeperManager extends Component {
         this.isFirstTouch = true;
         this.winScene.active = false;
         this.loseScene.active = false;
+        this.gameIntroScene.active = false;
         this.flagCount = 0;
+    }
+
+    startTimer() {
+        let seconds = 0;
+        let minutes = 0;
+
+        this._updateTime = () => {
+            seconds++;
+            if (seconds >= 60) {
+                seconds = 0;
+                minutes++;
+            }
+            this.timeLabel.string = `${minutes >= 10 ? "" : "0"}${minutes}:${seconds >= 10 ? "" : "0"}${seconds}`;
+        }
+
+        this.schedule(this._updateTime, 1);
     }
 
 }
@@ -305,7 +330,6 @@ function generateMinesweeperGrid(rows, cols, mines, exCol?, exRow?) {
 }
 
 function calculatePaddingLayout(col, row, layout: Layout) {
-
     const cellSize = layout.cellSize.clone();
     const nodeSize = layout.node.getComponent(UITransform).contentSize.clone();
 

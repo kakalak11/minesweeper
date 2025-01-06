@@ -24,7 +24,7 @@ export class BoxManager extends Component {
 
     _static: Sprite;
 
-    protected start(): void {
+    protected onLoad(): void {
         this._static = this.node.getComponent(Sprite);
     }
 
@@ -51,6 +51,7 @@ export class BoxManager extends Component {
             this._static.spriteFrame = this.values[this.value - 1];
         }
         this.isRevealed = true;
+        this.isFlagged = false;
     }
 
     revealMine() {
