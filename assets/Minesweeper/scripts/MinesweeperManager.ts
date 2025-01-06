@@ -1,9 +1,6 @@
 import { Size, tween, UIOpacity, UITransform, Vec2 } from 'cc';
 import { Prefab } from 'cc';
-import { Sprite } from 'cc';
-import { Color } from 'cc';
 import { instantiate } from 'cc';
-import { Intersection2D } from 'cc';
 import { EventTouch } from 'cc';
 import { _decorator, Component, Node } from 'cc';
 import { BoxManager } from './BoxManager';
@@ -13,10 +10,8 @@ import { Label } from 'cc';
 const { ccclass, property } = _decorator;
 
 
-const NUMS_MINE = 40;
-// const NUMS_MINE = 4;
-const TILE_SIZE = new Size(48, 48);
-const DIM_COLOR = new Color(100, 100, 100);
+const MINE_DIFF = [10, 20, 40];
+const TILE_DIFF = [new Size(64, 64), new Size(48, 48), new Size(32, 32)];
 
 @ccclass('MinesweeperManager')
 export class MinesweeperManager extends Component {
@@ -31,6 +26,7 @@ export class MinesweeperManager extends Component {
 
     @property(Label) timeLabel: Label;
     @property(Label) flagLabel: Label;
+    @property(Node) difficultyChoosing: Node;
 
     grid: number[][];
     boxGrid: BoxManager[][];
@@ -43,6 +39,8 @@ export class MinesweeperManager extends Component {
 
     NUMS_COL: number = 20;
     NUMS_ROW: number = 20;
+    NUMS_MINE: number = 10;
+    TILE_SIZE: Size = new Size(48, 48);
 
     start() {
         // this.initGrid();
@@ -50,9 +48,11 @@ export class MinesweeperManager extends Component {
     }
 
     initGrid() {
-        this.table.getComponent(Layout).cellSize = TILE_SIZE;
-        const [maxCol, maxRow] = calcGrid(this.table.getComponent(Layout));
+        this.table.getComponent(Layout).cellSize = this.TILE_SIZE;
+        const [maxCol, maxRow] = this.calcGrid(this.table.getComponent(Layout));
         this.NUMS_COL = maxCol; this.NUMS_ROW = maxRow;
+
+        console.log(`col ${maxCol} row ${maxRow}`);
 
         this.boxGrid = [];
         let index = 0;
@@ -76,7 +76,7 @@ export class MinesweeperManager extends Component {
     }
 
     initData(initCol?, initRow?) {
-        const grid = generateMinesweeperGrid(this.NUMS_ROW, this.NUMS_COL, NUMS_MINE, initCol, initRow);
+        const grid = generateMinesweeperGrid(this.NUMS_ROW, this.NUMS_COL, this.NUMS_MINE, initCol, initRow);
         this.grid = grid;
 
         for (let col = 0; col < this.NUMS_COL; col++) {
@@ -124,7 +124,7 @@ export class MinesweeperManager extends Component {
         if (this.touchHoldCallback) {
             this.unschedule(this.touchHoldCallback);
         }
-        if (!isValidTouch(evt)) return;
+        if (!this.isValidTouch(evt)) return;
 
         const isUseFlag = this.flagToggle.isChecked;
         const uiPoint = evt.getUILocation();
@@ -159,11 +159,11 @@ export class MinesweeperManager extends Component {
         box.setFlag();
         this.flagCount += !box.isFlagged || box.isFlagged && box.isMine ? 1 : -1;
 
-        if (this.flagCount == NUMS_MINE) {
+        if (this.flagCount == this.NUMS_MINE) {
             this.winScene.active = true;
         }
         const countFlag = this.table.getComponentsInChildren(BoxManager).filter(box => box.isFlagged).length;
-        this.flagLabel.string = `${countFlag} / ${NUMS_MINE}`;
+        this.flagLabel.string = `${countFlag} / ${this.NUMS_MINE}`;
     }
 
     revealNeighbors(box: BoxManager) {
@@ -229,6 +229,10 @@ export class MinesweeperManager extends Component {
     }
 
     onNewGame() {
+        const diffIndex = this.difficultyChoosing.getComponentsInChildren(Toggle).findIndex(toggle => toggle.isChecked);
+        this.NUMS_MINE = MINE_DIFF[diffIndex];
+        this.TILE_SIZE = TILE_DIFF[diffIndex];
+
         this.initGrid();
         this.table.off(Node.EventType.TOUCH_START);
         this.isFirstTouch = true;
@@ -236,6 +240,8 @@ export class MinesweeperManager extends Component {
         this.loseScene.active = false;
         this.gameIntroScene.active = false;
         this.flagCount = 0;
+        this.flagLabel.string = `0 / ${this.NUMS_MINE}`;
+        this.startTimer();
     }
 
     startTimer() {
@@ -252,6 +258,21 @@ export class MinesweeperManager extends Component {
         }
 
         this.schedule(this._updateTime, 1);
+    }
+
+    calcGrid(layout: Layout) {
+        const nodeTrans = layout.node.getComponent(UITransform);
+
+        const maxCol = Math.floor(nodeTrans.width / this.TILE_SIZE.width) - 1;
+        const maxRow = Math.floor(nodeTrans.height / this.TILE_SIZE.height) - 1;
+
+        return [maxCol, maxRow];
+    }
+
+    isValidTouch(evt: EventTouch) {
+        const deltaVec = evt.getUIStartLocation().subtract(evt.getUILocation());
+
+        return Math.abs(deltaVec.x) < this.TILE_SIZE.width / 2 && Math.abs(deltaVec.y) < this.TILE_SIZE.height / 2;
     }
 
 }
@@ -341,20 +362,4 @@ function calculatePaddingLayout(col, row, layout: Layout) {
     // layout.paddingTop = paddingLeftRight; layout.paddingBottom = 0;
     layout.paddingBottom = paddingTopBot, layout.paddingTop = paddingTopBot;
     layout.paddingLeft = paddingLeftRight, layout.paddingRight = paddingLeftRight;
-
-}
-
-function calcGrid(layout: Layout) {
-    const nodeTrans = layout.node.getComponent(UITransform);
-
-    const maxCol = Math.floor(nodeTrans.width / TILE_SIZE.width) - 1;
-    const maxRow = Math.floor(nodeTrans.height / TILE_SIZE.height) - 1;
-
-    return [maxCol, maxRow];
-}
-
-function isValidTouch(evt: EventTouch) {
-    const deltaVec = evt.getUIStartLocation().subtract(evt.getUILocation());
-
-    return Math.abs(deltaVec.x) < TILE_SIZE.width / 2 && Math.abs(deltaVec.y) < TILE_SIZE.height / 2;
 }
